@@ -71,9 +71,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_twitter)
+Your Name - [@your_twitter](https://twitter.com/MajidHws)
 
-Project Link: [https://github.com/yourusername/tab-session-manager](https://github.com/yourusername/tab-session-manager)
+Project Link: [https://github.com/yourusername/tab-session-manager](https://github.com/majidhws/tab-session-manager)
 
 ## Acknowledgments
 
