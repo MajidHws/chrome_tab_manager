@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tab Session Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Tab Session Manager</h1>
+    
+    <div class="save-session">
+      <input type="text" id="sessionName" placeholder="Enter session name" />
+      <button id="saveSession">Save Current Tabs</button>
+    </div>
+    
+    <div class="sessions-list">
+      <h2>Saved Sessions</h2>
+      <div id="sessions">
+        <!-- Sessions will be loaded here -->
+        <p class="no-sessions">No saved sessions yet.</p>
+      </div>
+    </div>
+
+    <!-- Tab Management Modal -->
+    <div id="tabModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Manage Tabs in <span id="modalSessionName"></span></h2>
+        <div class="tab-actions">
+          <button id="addCurrentTab">Add Current Tab</button>
+          <button id="addAllTabs">Add All Tabs</button>
+        </div>
+        <ul id="tabList" class="tab-list">
+          <!-- Tabs will be listed here -->
+        </ul>
+        <div class="modal-actions">
+          <button id="saveTabChanges">Save Changes</button>
+          <button id="cancelTabChanges" class="btn-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Session Tabs - Tab Session Manager</title>
+  <link rel="stylesheet" href="popup.css">
+  <style>
+    :root {
+      --system-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --primary-color: #0071e3;
+      --background: #f5f5f7;
+      --card-bg: #ffffff;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --border-color: #d2d2d7;
+      --hover-bg: #f5f5f7;
+      --active-bg: #e5e5ea;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      --border-radius: 12px;
+      --spacing: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: var(--system-font);
+      background-color: var(--background);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .tab-actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-list-container {
+      flex: 1;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .tab-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+      background: var(--card-bg);
+    }
+
+    .tab-item:last-child {
+      border-bottom: none;
+    }
+
+    .tab-item:hover {
+      background-color: var(--hover-bg);
+    }
+
+    .tab-favicon {
+      width: 16px;
+      height: 16px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .tab-title {
+      flex: 1;
+      min-width: 0;
+      margin-right: 12px;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-primary);
+    }
+
+    .tab-url {
+      flex: 2;
+      min-width: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 12px;
+    }
+
+    .delete-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .delete-tab:hover {
+      background-color: rgba(255, 59, 48, 0.1);
+      color: #ff3b30;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      background: var(--card-bg);
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px;
+      margin: 24px -24px -24px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Scrollbar styling */
+    .tab-list::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .tab-list::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 10px;
+    }
+
+    .tab-list::-webkit-scrollbar-thumb {
+      background-color: #c1c1c1;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    .tab-list::-webkit-scrollbar-thumb:hover {
+      background-color: #a8a8a8;
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #1c1c1e;
+        --card-bg: #2c2c2e;
+        --text-primary: #f5f5f7;
+        --text-secondary: #8e8e93;
+        --border-color: #3a3a3c;
+        --hover-bg: #3a3a3c;
+        --active-bg: #48484a;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .footer {
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .container {
+        padding: 16px;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .tab-item {
+        flex-wrap: wrap;
+        padding: 10px 12px;
+      }
+      
+      .tab-title {
+        width: 100%;
+        margin-bottom: 4px;
+      }
+      
+      .tab-url {
+        font-size: 12px;
+        margin-right: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Manage: <span id="sessionName">Session Name</span></h1>
+    </header>
+    
+    <div class="tab-actions">
+      <button id="addCurrentTab" class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 6px;">
+          <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Add Current Tab
+      </button>
+      <button id="addAllTabs" class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 6px;">
+          <path d="M12 5V19M5 12H19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Add All Tabs
+      </button>
+    </div>
+    
+    <div class="tab-list-container">
+      <ul id="tabList" class="tab-list">
+        <!-- Tabs will be listed here -->
+        <li class="empty-state">
+          <p>No tabs in this session yet.</p>
+          <p class="hint">Use the buttons above to add tabs.</p>
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="footer">
+      <button id="cancelButton" class="btn-secondary">Cancel</button>
+      <button id="saveButton" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 6px;">
+          <path d="M19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 21V13H7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Save Changes
+      </button>
+    </footer>
+  </div>
+  
+  <script src="manage.js"></script>
+</body>
+</html>

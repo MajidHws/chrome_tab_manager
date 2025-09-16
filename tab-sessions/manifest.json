@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Session Manager",
+  "version": "1.0",
+  "description": "Save, restore, and manage your browser tab sessions",
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon16.png",
+      "128": "images/icon16.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["manage.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon16.png",
+    "128": "images/icon16.png"
+  }
+}
